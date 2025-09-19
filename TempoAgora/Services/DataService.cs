@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System.Net;
 using TempoAgora.Models;
 
 namespace TempoAgora.Services
@@ -9,7 +10,7 @@ namespace TempoAgora.Services
         {
             Tempo? t = null;
 
-            string chave = "f530f5ad851e7b869f3d333fc1bb485d";
+            string chave = "38a4470113ee49e39ed4dc9cf5d7275b";
 
             string url = $"https://api.openweathermap.org/data/2.5/weather?" +
                          $"q={cidade}&units=metric&appid={chave}";
@@ -42,6 +43,18 @@ namespace TempoAgora.Services
                         sunset = sunset.ToString(),
                     };//Fecha obj do Tempo
                 }//Fecha if se o status do servidor foi de sucesso
+                else
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.NotFound:
+                            throw new Exception("Cidade não encontrada. Verifique o nome e tente novamente.");
+                        case HttpStatusCode.Unauthorized:
+                            throw new Exception("Chave da API inválida. Verifique sua chave.");
+                        default:
+                            throw new Exception($"Erro na requisição: {(int)resp.StatusCode} - {resp.ReasonPhrase}");
+                    }
+                }
             }//Fecha laço using
 
             return t;

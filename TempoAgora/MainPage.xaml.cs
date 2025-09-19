@@ -14,7 +14,13 @@ namespace TempoAgora
         {
             try
             {
-                if(!string.IsNullOrEmpty(txt_cidade.Text))
+                if(Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+                {
+                    await DisplayAlert("Ops", "Sem conexão com a internet", "OK");
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(txt_cidade.Text))
                 {
                     Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
 
@@ -25,14 +31,10 @@ namespace TempoAgora
                                          $"Nascer do sol: {t.sunrise} \n" +
                                          $"Por do sol: {t.sunset} \n" +
                                          $"Temp Máx: {t.temp_max} \n" +
-                                         $"Temp Min: {t.temp_min} \n";
-
-                        /*dados_previsao = $"Latitude: {t.lat} \n" +
-                                         $"Longitude: {t.lon} \n" +
-                                         $"Nascer do sol: {t.sunrise} \n" +
-                                         $"Por do sol: {t.sunset} \n" +
-                                         $"Temp Máx: {t.temp_max} \n" +
-                                         $"Temp Min: {t.temp_min} \n";*/
+                                         $"Temp Min: {t.temp_min} \n" +
+                                         $"Descrição: {t.description} \n" +
+                                         $"Velocidade do vento: {t.speed} \n" +
+                                         $"Visibilidade: {t.visibility} \n";
 
                         lbl_res.Text = dados_previsao;
                     }
